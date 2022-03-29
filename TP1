@@ -1,0 +1,21 @@
+import random
+
+def aleatorio(n):
+	numero=""
+	for i in range(n):
+		a = str(random.randint(0,1))
+		numero += a
+	return (numero)
+
+def arreglo(n, m):
+	x = []
+	for i in  range(n):
+		x.append(aleatorio(m))
+	return x
+
+n = 10
+x = arreglo(n, 4)
+print (x)
+for i in range(10):
+	x[i] = int(x[i], 2)
+print (x)
