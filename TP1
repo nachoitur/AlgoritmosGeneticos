@@ -44,6 +44,17 @@ def crearuleta(y):
 
 	return ruleta
 
+def crossover(nro,pad1,pad2):
+	hijo1=[]
+	hijo2=[]
+	hijo1.append(pad1[:nro])
+	hijo1.append(pad2[nro:])
+	hijo2.append(pad2[:nro])
+	hijo2.append(pad1[nro:])
+
+
+
+
 n = 10
 x = arreglo(n, 30)
 print (x)
@@ -54,7 +65,9 @@ fit = fitness(y)
 print (fit)
 print (crearuleta(fit))
 
- 
-print(random.choice(crearuleta(fit)))
    
-
+nro1=random.choice(crearuleta(fit))
+nro2=random.choice(crearuleta(fit))  
+nroCross=random.random()
+print(nroCross)
+nroCorte=random.randint(0,28)
