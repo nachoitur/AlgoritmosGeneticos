@@ -18,7 +18,43 @@ def pasaje(x):
 		x[i] = int(x[i], 2)
 	return x
 
+def funcionobjetivo(y):
+	valoresfo = []
+	for i in range(10):
+		valoresfo.append((y[i]/(2**(30-1)))**2)
+	return valoresfo
+
+def fitness(y):
+	valoresfit = []
+	sum = 0
+
+	for i in range(10):
+		sum += y[i]
+
+	for i in range(10):
+		valoresfit.append(round (y[i]*100/sum))
+
+	return valoresfit
+
+def crearuleta(y):
+	ruleta = []
+	for i in range(10):
+		for u in range(y[i]):
+			ruleta.append(i)
+
+	return ruleta
+
 n = 10
-x = arreglo(n, 4)
+x = arreglo(n, 30)
 print (x)
-print (pasaje(x))
+y = pasaje(x)
+print(y)
+print(funcionobjetivo(y))
+fit = fitness(y)
+print (fit)
+print (crearuleta(fit))
+
+ 
+print(random.choice(crearuleta(fit)))
+   
+
