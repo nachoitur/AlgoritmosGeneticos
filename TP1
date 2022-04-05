@@ -13,9 +13,12 @@ def arreglo(n, m):
 		x.append(aleatorio(m))
 	return x
 
+def pasaje(x):
+	for i in range(10):
+		x[i] = int(x[i], 2)
+	return x
+
 n = 10
 x = arreglo(n, 4)
 print (x)
-for i in range(10):
-	x[i] = int(x[i], 2)
-print (x)
+print (pasaje(x))
