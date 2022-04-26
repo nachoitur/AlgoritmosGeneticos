@@ -1,0 +1,214 @@
+import random
+import math
+import statistics
+import operator
+
+
+def aleatorio(n):
+	numero=""
+	for i in range(n):
+		a = str(random.randint(0,1))
+		numero += a
+	return (numero)
+
+def arreglo(n, m):
+	numeros = []
+	for i in  range(n):
+		numeros.append(aleatorio(m))
+	return numeros
+
+def pasaje(poblBinaria):
+	poblacionEnteros=[]
+	for i in range(10):
+		poblacionEnteros.append(int(poblBinaria[i], 2))
+	return poblacionEnteros
+
+def funcionobjetivo(poblEntero):
+	valoresfo = []
+	for i in range(10):
+		valoresfo.append((poblEntero[i]/(2**(30-1)))**2)
+	return valoresfo
+
+def fitness(funcObj):
+	valoresfit = []
+	sum = 0
+
+	for i in range(10):
+		sum += funcObj[i]
+
+	for i in range(10):
+		valoresfit.append(math.ceil (funcObj[i]*100/sum))
+
+	return valoresfit
+
+'''def crearuleta(funFit):
+	ruleta = []
+	for i in range(10):
+		for u in range(funFit[i]):
+			ruleta.append(i)
+
+	return ruleta'''
+
+
+
+
+
+def seleccionTorneo(elegidos,cantIndividuos):
+	global poblacion
+	global funObj
+	valoresFuncObj=dict()
+	for i in range(cantIndividuos):
+		pos=poblacion.index(elegidos[i])
+		#print("pos elegido "+str(i)+":"+str(pos))
+		valoresFuncObj[pos]=funObj[pos]
+	#print(valoresFuncObj)
+	max_key = max(valoresFuncObj.items(), key=operator.itemgetter(1))[0]
+	#print(max_key)
+	#print(poblacion[max_key])
+	return poblacion[max_key]
+
+
+def mutacion(posMutacion,padre):
+	padreLista=list(padre)
+	#print(padre1Lista)
+	#print(padre2Lista)
+	
+	if(padreLista[posMutacion]=='1'):
+		padreLista[posMutacion]='0'
+	else:
+		padreLista[posMutacion]='1'
+
+	padreCadena="".join(map(str, padreLista))
+	
+
+
+	#print("Padres despues de posMutacion: ")
+	#print(padre1Lista)
+	#print(padre2Lista)
+
+	return padreCadena
+
+
+
+
+
+def crossover(nro,pad1,pad2):
+	hijo1=[]
+	hijo2=[]
+	hijo1.append(pad1[:nro])
+	hijo1.append(pad2[nro:])
+	hijo2.append(pad2[:nro])
+	hijo2.append(pad1[nro:])
+	hijo1="".join(map(str, hijo1))
+	hijo2="".join(map(str, hijo2))
+
+	return [hijo1,hijo2]
+
+
+
+
+
+
+
+def padres(nroCross,pad1,pad2):
+	hijosCross=[]
+	'''print("Padres antes de crossover: ")
+	print(pad1)
+	print(pad2)
+	print(str(nroCross))'''
+	if(nroCross<0.75):
+		nroCorte=random.randint(0,28)
+		#print("Numero corte"+str(nroCorte))
+		hijosCross.extend(crossover(nroCorte,pad1,pad2))
+		pad1=hijosCross[0]
+		pad2=hijosCross[1]
+		'''print("Padres despues de crossover: ")
+		print(pad1)
+		print(pad2)'''
+	padresLista=[pad1,pad2]
+	for i in range(2):
+		nroMut=random.random()
+		if(nroMut<0.05):
+			posMutacion=random.randint(0,29)
+			padresLista[i] = mutacion(posMutacion,padresLista[i])
+	
+	return padresLista
+
+
+
+
+
+
+n = 10
+poblacion = arreglo(n, 30)
+print("Primera poblacion: ")
+print (poblacion)
+
+
+for j in range(10):
+	poblacionEnteros=pasaje(poblacion)
+	#print("Primera poblacion pasada a enteros: ")
+	#print(poblacionEnteros)
+	funObj=funcionobjetivo(poblacionEnteros)
+	#print("Funcion obejtivo: ")
+	#print(funObj)
+	fit = fitness(funObj)
+	#print("Funcion fitness: ")
+	#print (fit)
+	#ruleta=crearuleta(fit)
+	#print("Ruleta: ")
+	#print(ruleta)
+
+
+	funObjOrd=sorted(funObj,reverse=True)
+	#print(funObj)
+	#print(funObjOrd)
+
+	print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
+	print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
+	print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
+	print("SUMA: "+str(sum(funObj)))
+
+	print()
+
+
+
+
+	nuevaPoblacion=[]
+	elegidos=[]
+	padresElegidos=[]
+
+	for t in range(10):
+		cantIndividuos=random.randint(1,9)
+		print("Cantidad individuos: "+str(cantIndividuos))
+		for k in range(cantIndividuos):
+			elegidos.append(random.choice(poblacion))
+		padresElegidos.append(seleccionTorneo(elegidos,cantIndividuos))
+
+	print(padresElegidos)
+	for i in range(5):
+		nroCross=random.random()
+		nuevaPoblacion.extend(padres(nroCross,padresElegidos[(2*i)],padresElegidos[1+(2*i)]))
+		#nuevaPoblacion.append(padres(nroCross,seleccionTorneo(elegidos)))
+
+
+
+
+	
+	print("Nueva pobl:")
+
+	poblacion=nuevaPoblacion
+	print(poblacion)
+
+
+print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
+print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
+print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
+print("SUMA: "+str(sum(funObj)))
+
+print()
+
+#print("Poblacion final: ")
+poblacionOrdenada=sorted(poblacion,reverse=True)
+#print(poblacionOrdenada)
+print("Cromosoma valor máximo= "+str(poblacion[0])+" // "+str(int(poblacionOrdenada[i], 2)))
