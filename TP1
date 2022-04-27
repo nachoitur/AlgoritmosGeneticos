@@ -117,89 +117,136 @@ n = 10
 poblacion = arreglo(n, 30)
 print("Primera poblacion: ")
 print (poblacion)
-
-
-for j in range(10):
-	poblacionEnteros=pasaje(poblacion)
-	#print("Primera poblacion pasada a enteros: ")
-	#print(poblacionEnteros)
-	funObj=funcionobjetivo(poblacionEnteros)
-	#print("Funcion obejtivo: ")
-	#print(funObj)
-	fit = fitness(funObj)
-	#print("Funcion fitness: ")
-	#print (fit)
-	ruleta=crearuleta(fit)
-	#print("Ruleta: ")
-	#print(ruleta)
-
-
-	funObjOrd=sorted(funObj,reverse=True)
-	#print(funObj)
-	#print(funObjOrd)
-
-	print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
-	print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
-	print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
-	print("SUMA: "+str(sum(funObj)))
-
-	print()
-
-
-
-
-	nuevaPoblacion=[]
-
-	for i in range(5):
-		nro1=random.choice(ruleta)
-		nro2=random.choice(ruleta)
-
-		#print("nro 1 de ruleta :"+str(nro1)+" nro2 de ruleta: "+str(nro2))
-
-		nroCross=random.random()
-		#print("Numero crossover: ")
-		#print(nroCross)
-		#print("Numero mutacion: ")
-		#print(nroMut)
-		#print("Padre 1 y Padre 2: ")
-		#print(poblacion[nro1],poblacion[nro2])
-		nuevaPoblacion.extend(padres(nroCross,poblacion[nro1],poblacion[nro2]))
-
+op = input('Seleccione opción A o B: ')
+print(op)
+if op.lower() == 'a':
+	for j in range(10):
+		poblacionEnteros=pasaje(poblacion)
+		#print("Primera poblacion pasada a enteros: ")
+		#print(poblacionEnteros)
+		funObj=funcionobjetivo(poblacionEnteros)
+		#print("Funcion obejtivo: ")
+		#print(funObj)
+		fit = fitness(funObj)
+		#print("Funcion fitness: ")
+		#print (fit)
+		ruleta=crearuleta(fit)
+		#print("Ruleta: ")
+		#print(ruleta)
 	
-	#print("Nueva poblacion: ")	
-	#print(nuevaPoblacion)
-	poblacion=nuevaPoblacion
-
-
-print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
-print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
-print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
-print("SUMA: "+str(sum(funObj)))
-
-print()
-
-#print("Poblacion final: ")
-poblacionOrdenada=sorted(poblacion,reverse=True)
-#print(poblacionOrdenada)
-print("Cromosoma valor máximo= "+str(poblacion[0])+" // "+str(int(poblacionOrdenada[i], 2)))
-
-
-
-
-'''
-for i in range(5):
-		nro1=random.choice(ruleta)
-		nro2=random.choice(ruleta)
-
-		print("nro 1 de ruleta :"+str(nro1)+" nro2 de ruleta: "+str(nro2))
-		if(len(nuevaPoblacion) == 0):
-			nuevaPoblacion.extend([poblacion[nro1],poblacion[nro2]])
-			continue
-
-		nroCross=random.random()
-		print("Numero crossover: ")
-		print(nroCross)
+	
+		funObjOrd=sorted(funObj,reverse=True)
+		#print(funObj)
+		#print(funObjOrd)
+	
+		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
+		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
+		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
+		print("SUMA: "+str(sum(funObj)))
+	
+		print()
+	
+	
+	
+	
+		nuevaPoblacion=[]
+	
+		for i in range(5):
+			nro1=random.choice(ruleta)
+			nro2=random.choice(ruleta)
+	
+			#print("nro 1 de ruleta :"+str(nro1)+" nro2 de ruleta: "+str(nro2))
+	
+			nroCross=random.random()
+			#print("Numero crossover: ")
+			#print(nroCross)
+			#print("Numero mutacion: ")
+			#print(nroMut)
+			#print("Padre 1 y Padre 2: ")
+			#print(poblacion[nro1],poblacion[nro2])
+			nuevaPoblacion.extend(padres(nroCross,poblacion[nro1],poblacion[nro2]))
+	
 		
+		#print("Nueva poblacion: ")	
+		#print(nuevaPoblacion)
+		poblacion=nuevaPoblacion
+	
+	
+	print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
+	print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
+	print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
+	print("SUMA: "+str(sum(funObj)))
+	
+	print()
+	
+	#print("Poblacion final: ")
+	poblacionOrdenada=sorted(poblacion,reverse=True)
+	#print(poblacionOrdenada)
+	print("Cromosoma valor máximo= "+str(poblacion[0])+" // "+str(int(poblacionOrdenada[i], 2)))
+
+else:
+	for j in range(10):
+		poblacionEnteros=pasaje(poblacion)
+		#print("Primera poblacion pasada a enteros: ")
+		#print(poblacionEnteros)
+		funObj=funcionobjetivo(poblacionEnteros)
+		#print("Funcion obejtivo: ")
+		#print(funObj)
+		fit = fitness(funObj)
+		#print("Funcion fitness: ")
+		#print (fit)
+		ruleta=crearuleta(fit)
+		#print("Ruleta: ")
+		#print(ruleta)
+	
+	
+		funObjOrd=sorted(funObj,reverse=True)
+		#print(funObj)
+		#print(funObjOrd)
+	
+		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
+		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
+		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
+		print("SUMA: "+str(sum(funObj)))
+	
+		print()
+	
 		
+		nuevaPoblacion=[]
+		x1 = funObj.index(funObjOrd[0])
+		x2 = funObj.index(funObjOrd[1])
+		nuevaPoblacion.append(poblacion[x1])
+		nuevaPoblacion.append(poblacion[x2])
+	
+		for i in range(4):
+			nro1=random.choice(ruleta)
+			nro2=random.choice(ruleta)
+	
+			#print("nro 1 de ruleta :"+str(nro1)+" nro2 de ruleta: "+str(nro2))
+	
+			nroCross=random.random()
+			#print("Numero crossover: ")
+			#print(nroCross)
+			#print("Numero mutacion: ")
+			#print(nroMut)
+			#print("Padre 1 y Padre 2: ")
+			#print(poblacion[nro1],poblacion[nro2])
+			nuevaPoblacion.extend(padres(nroCross,poblacion[nro1],poblacion[nro2]))
+	
 		
-		'''
+		#print("Nueva poblacion: ")	
+		#print(nuevaPoblacion)
+		poblacion=nuevaPoblacion
+	
+	
+	print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
+	print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
+	print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
+	print("SUMA: "+str(sum(funObj)))
+	
+	print()
+	
+	#print("Poblacion final: ")
+	poblacionOrdenada=sorted(poblacion,reverse=True)
+	#print(poblacionOrdenada)
+	print("Cromosoma valor máximo= "+str(poblacion[0])+" // "+str(int(poblacionOrdenada[i], 2)))
