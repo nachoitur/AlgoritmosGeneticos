@@ -179,8 +179,8 @@ for j in range(10):
 	padresElegidos=[]
 
 	for t in range(10):
-		cantIndividuos=random.randint(1,9)
-		print("Cantidad individuos: "+str(cantIndividuos))
+		cantIndividuos=2
+		#print("Cantidad individuos: "+str(cantIndividuos))
 		for k in range(cantIndividuos):
 			elegidos.append(random.choice(poblacion))
 		padresElegidos.append(seleccionTorneo(elegidos,cantIndividuos))
