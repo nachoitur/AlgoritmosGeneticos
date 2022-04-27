@@ -2,6 +2,8 @@ import random
 import math
 import statistics
 
+
+#Función que genera cada cromosoma de la población inicial concatenando ceros y unos de forma aleatoria
 def aleatorio(n):
 	numero=""
 	for i in range(n):
@@ -9,24 +11,31 @@ def aleatorio(n):
 		numero += a
 	return (numero)
 
+#Función que agrega cada coromosoma creado aleatoriamente a una lista que va a ser la población inicial
 def arreglo(n, m):
 	numeros = []
 	for i in  range(n):
 		numeros.append(aleatorio(m))
 	return numeros
 
+
+#Esta función convierte cada cromosoma de la poblacion a un número entero y los agrega a una lista
 def pasaje(poblBinaria):
 	poblacionEnteros=[]
 	for i in range(10):
 		poblacionEnteros.append(int(poblBinaria[i], 2))
 	return poblacionEnteros
 
+
+#En esta función se crea una lista con los valores de todos los cormosomas de una población al ser aplicados a la función objetivo 
 def funcionobjetivo(poblEntero):
 	valoresfo = []
 	for i in range(10):
-		valoresfo.append((poblEntero[i]/(2**(30-1)))**2)
+		valoresfo.append((poblEntero[i]/((2**30)-1))**2)
 	return valoresfo
 
+
+#Función donde se genera una lista con los valores fitness de una población
 def fitness(funcObj):
 	valoresfit = []
 	sum = 0
@@ -39,6 +48,8 @@ def fitness(funcObj):
 
 	return valoresfit
 
+
+#Se crea la ruleta para luego poder elegir a los padres según los valores fitness de los cromosomas
 def crearuleta(funFit):
 	ruleta = []
 	for i in range(10):
@@ -47,11 +58,9 @@ def crearuleta(funFit):
 
 	return ruleta
 
+#Realiza la mutación, intercambiando los valores del gen por 0 o 1 dependiendo de su valor original
 def mutacion(posMutacion,padre):
 	padreLista=list(padre)
-	#print(padre1Lista)
-	#print(padre2Lista)
-	
 	if(padreLista[posMutacion]=='1'):
 		padreLista[posMutacion]='0'
 	else:
@@ -59,18 +68,12 @@ def mutacion(posMutacion,padre):
 
 	padreCadena="".join(map(str, padreLista))
 	
-
-
-	#print("Padres despues de posMutacion: ")
-	#print(padre1Lista)
-	#print(padre2Lista)
-
 	return padreCadena
 
 
 
 
-
+#Realiza el crossover, intercambiando los genes entre los padres dependiendo de la posición de corte, que es pasada por parámetro
 def crossover(nro,pad1,pad2):
 	hijo1=[]
 	hijo2=[]
@@ -84,22 +87,14 @@ def crossover(nro,pad1,pad2):
 	return [hijo1,hijo2]
 
 
-
+#Función que toma los padres seleccionados, evalua si va a ocurrir crossover, hace lo mismo para la mutación y devuelve a los hijos para que estos sean agregados a la siguetnte población
 def padres(nroCross,pad1,pad2):
 	hijosCross=[]
-	'''print("Padres antes de crossover: ")
-	print(pad1)
-	print(pad2)
-	print(str(nroCross))'''
 	if(nroCross<0.75):
 		nroCorte=random.randint(0,28)
-		#print("Numero corte"+str(nroCorte))
 		hijosCross.extend(crossover(nroCorte,pad1,pad2))
 		pad1=hijosCross[0]
 		pad2=hijosCross[1]
-		'''print("Padres despues de crossover: ")
-		print(pad1)
-		print(pad2)'''
 	padresLista=[pad1,pad2]
 	for i in range(2):
 		nroMut=random.random()
@@ -111,107 +106,78 @@ def padres(nroCross,pad1,pad2):
 
 
 
+#Pregunto si se quiere ejecutar la Opcion A o B
+op = input('Seleccione opción A o B: ')
+print(op)
 
-
+#Creo la lista con la población inicial
 n = 10
 poblacion = arreglo(n, 30)
 print("Primera poblacion: ")
 print (poblacion)
-op = input('Seleccione opción A o B: ')
-print(op)
+
 if op.lower() == 'a':
 	for j in range(10):
+
+		#Creo las distintas listas para poder avanzar con el procedimiento
 		poblacionEnteros=pasaje(poblacion)
-		#print("Primera poblacion pasada a enteros: ")
-		#print(poblacionEnteros)
 		funObj=funcionobjetivo(poblacionEnteros)
-		#print("Funcion obejtivo: ")
-		#print(funObj)
 		fit = fitness(funObj)
-		#print("Funcion fitness: ")
-		#print (fit)
 		ruleta=crearuleta(fit)
-		#print("Ruleta: ")
-		#print(ruleta)
-	
-	
+
+		#Creo una lista con los valores de la función objetivo ordenados y muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de cada población
 		funObjOrd=sorted(funObj,reverse=True)
-		#print(funObj)
-		#print(funObjOrd)
-	
+		posMax = funObj.index(funObjOrd[0])
+		print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
 		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
 		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
 		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
-		print("SUMA: "+str(sum(funObj)))
-	
+		#print("SUMA: "+str(sum(funObj)))
 		print()
-	
-	
-	
 	
 		nuevaPoblacion=[]
 	
 		for i in range(5):
+			#Tomo aleatoriamente dos padres con el metodo de la ruleta y los agrego a la nueva población despues de evaluar el crossover y la mutación
 			nro1=random.choice(ruleta)
 			nro2=random.choice(ruleta)
-	
-			#print("nro 1 de ruleta :"+str(nro1)+" nro2 de ruleta: "+str(nro2))
-	
 			nroCross=random.random()
-			#print("Numero crossover: ")
-			#print(nroCross)
-			#print("Numero mutacion: ")
-			#print(nroMut)
-			#print("Padre 1 y Padre 2: ")
-			#print(poblacion[nro1],poblacion[nro2])
 			nuevaPoblacion.extend(padres(nroCross,poblacion[nro1],poblacion[nro2]))
-	
 		
-		#print("Nueva poblacion: ")	
-		#print(nuevaPoblacion)
+		#Actualizo la población para trabajar con los cormosomas de la ultima población generada 
 		poblacion=nuevaPoblacion
 	
-	
+
+	#Muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de la última población generada
+	posMax = funObj.index(funObjOrd[0])
+	print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
 	print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
 	print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
 	print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
-	print("SUMA: "+str(sum(funObj)))
+
 	
-	print()
-	
-	#print("Poblacion final: ")
-	poblacionOrdenada=sorted(poblacion,reverse=True)
-	#print(poblacionOrdenada)
-	print("Cromosoma valor máximo= "+str(poblacion[0])+" // "+str(int(poblacionOrdenada[i], 2)))
+
 
 else:
 	for j in range(10):
+
+		#Creo las distintas listas para poder avanzar con el procedimiento
 		poblacionEnteros=pasaje(poblacion)
-		#print("Primera poblacion pasada a enteros: ")
-		#print(poblacionEnteros)
 		funObj=funcionobjetivo(poblacionEnteros)
-		#print("Funcion obejtivo: ")
-		#print(funObj)
 		fit = fitness(funObj)
-		#print("Funcion fitness: ")
-		#print (fit)
 		ruleta=crearuleta(fit)
-		#print("Ruleta: ")
-		#print(ruleta)
 	
-	
+		#Creo una lista con los valores de la función objetivo ordenados y muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de cada población
 		funObjOrd=sorted(funObj,reverse=True)
-		#print(funObj)
-		#print(funObjOrd)
-	
+		posMax = funObj.index(funObjOrd[0])
+		print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
 		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
 		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
 		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
-		print("SUMA: "+str(sum(funObj)))
-	
+
 		print()
 	
-		
+		#Agrego directamente a al nueva población los dos cormosomas que poseen el mejor fitness(si poseen el mejor fitness, también poseen los valores mayores en la lista de los valores de la función objetivo)
 		nuevaPoblacion=[]
 		x1 = funObj.index(funObjOrd[0])
 		x2 = funObj.index(funObjOrd[1])
@@ -219,34 +185,22 @@ else:
 		nuevaPoblacion.append(poblacion[x2])
 	
 		for i in range(4):
+
+			#Tomo aleatoriamente dos padres con el metodo de la ruleta y los agrego a la nueva población despues de evaluar el crossover y la mutación
 			nro1=random.choice(ruleta)
-			nro2=random.choice(ruleta)
-	
-			#print("nro 1 de ruleta :"+str(nro1)+" nro2 de ruleta: "+str(nro2))
-	
+			nro2=random.choice(ruleta)	
 			nroCross=random.random()
-			#print("Numero crossover: ")
-			#print(nroCross)
-			#print("Numero mutacion: ")
-			#print(nroMut)
-			#print("Padre 1 y Padre 2: ")
-			#print(poblacion[nro1],poblacion[nro2])
 			nuevaPoblacion.extend(padres(nroCross,poblacion[nro1],poblacion[nro2]))
-	
-		
-		#print("Nueva poblacion: ")	
-		#print(nuevaPoblacion)
+
+		#Actualizo la población para trabajar con los cormosomas de la ultima población generada
 		poblacion=nuevaPoblacion
 	
-	
+	#Muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de la última población generada
+	posMax = funObj.index(funObjOrd[0])
+	print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
 	print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
 	print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
 	print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
-	print("SUMA: "+str(sum(funObj)))
 	
-	print()
 	
-	#print("Poblacion final: ")
-	poblacionOrdenada=sorted(poblacion,reverse=True)
-	#print(poblacionOrdenada)
-	print("Cromosoma valor máximo= "+str(poblacion[0])+" // "+str(int(poblacionOrdenada[i], 2)))
+	
