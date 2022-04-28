@@ -1,7 +1,7 @@
 import random
 import math
 import statistics
-
+import matplotlib.pyplot as plt
 
 #Función que genera cada cromosoma de la población inicial concatenando ceros y unos de forma aleatoria
 def aleatorio(n):
@@ -108,16 +108,22 @@ def padres(nroCross,pad1,pad2):
 
 #Pregunto si se quiere ejecutar la Opcion A o B
 op = input('Seleccione opción A o B: ')
-print(op)
 
+nroIteraciones=10
 #Creo la lista con la población inicial
 n = 10
 poblacion = arreglo(n, 30)
-print("Primera poblacion: ")
+print("Primera población: ")
 print (poblacion)
 
+#Creo la listas para la muestra de graficos
+maximos=[]
+minimos=[]
+promedios=[]
+
+
 if op.lower() == 'a':
-	for j in range(10):
+	for j in range(nroIteraciones):
 
 		#Creo las distintas listas para poder avanzar con el procedimiento
 		poblacionEnteros=pasaje(poblacion)
@@ -130,11 +136,16 @@ if op.lower() == 'a':
 		posMax = funObj.index(funObjOrd[0])
 		print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
 		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
+		maximos.append(funObjOrd[0])
 		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
+		minimos.append(funObjOrd[9])
 		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
-		#print("SUMA: "+str(sum(funObj)))
+		promedios.append(statistics.mean(funObjOrd))
+		'''print()
+		print(funObjOrd[0])
+		print(funObjOrd[9])
+		print(statistics.mean(funObjOrd))'''
 		print()
-	
 		nuevaPoblacion=[]
 	
 		for i in range(5):
@@ -150,16 +161,27 @@ if op.lower() == 'a':
 
 	#Muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de la última población generada
 	posMax = funObj.index(funObjOrd[0])
-	print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
-	print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
-	print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
-	print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
+	print("Cromosoma correspondiente al valor máximo población número "+str(nroIteraciones)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
+	print("Valor máximo población número "+str(nroIteraciones)+"= "+str(funObjOrd[0]))
+	maximos.append(funObjOrd[0])
+	print("Valor mínimo población número "+str(nroIteraciones)+"= "+str(funObjOrd[9]))
+	minimos.append(funObjOrd[9])
+	print("Promedio población número "+str(nroIteraciones)+"= "+ str(statistics.mean(funObjOrd)))
+	promedios.append(statistics.mean(funObjOrd))
+	'''print()
+	print(funObjOrd[0])
+	print(funObjOrd[9])
+	print(statistics.mean(funObjOrd))'''
+	print()
+	print("Población final: ")
+	print (poblacion)
+
 
 	
 
 
 else:
-	for j in range(10):
+	for j in range(nroIteraciones):
 
 		#Creo las distintas listas para poder avanzar con el procedimiento
 		poblacionEnteros=pasaje(poblacion)
@@ -172,9 +194,16 @@ else:
 		posMax = funObj.index(funObjOrd[0])
 		print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
 		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
+		maximos.append(funObjOrd[0])
 		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
+		minimos.append(funObjOrd[9])
 		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
-
+		promedios.append(statistics.mean(funObjOrd))
+		'''print()
+		print(funObjOrd[0])
+		print(funObjOrd[9])
+		print(statistics.mean(funObjOrd))'''
+		print()
 		print()
 	
 		#Agrego directamente a al nueva población los dos cormosomas que poseen el mejor fitness(si poseen el mejor fitness, también poseen los valores mayores en la lista de los valores de la función objetivo)
@@ -197,10 +226,30 @@ else:
 	
 	#Muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de la última población generada
 	posMax = funObj.index(funObjOrd[0])
-	print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
-	print("Valor máximo población número "+str(10)+"= "+str(funObjOrd[0]))
-	print("Valor mínimo población número "+str(10)+"= "+str(funObjOrd[9]))
-	print("Promedio población número "+str(10)+"= "+ str(statistics.mean(funObjOrd)))
+	print("Cromosoma correspondiente al valor máximo población número "+str(nroIteraciones)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
+	print("Valor máximo población número "+str(nroIteraciones)+"= "+str(funObjOrd[0]))
+	maximos.append(funObjOrd[0])
+	print("Valor mínimo población número "+str(nroIteraciones)+"= "+str(funObjOrd[9]))
+	minimos.append(funObjOrd[9])
+	print("Promedio población número "+str(nroIteraciones)+"= "+ str(statistics.mean(funObjOrd)))
+	promedios.append(statistics.mean(funObjOrd))
+	print()
+	'''print(funObjOrd[0])
+	print(funObjOrd[9])
+	print(statistics.mean(funObjOrd))
+	print()'''
+	print("Población final: ")
+	print (poblacion)
 	
 	
 	
+#Operaciones que realizo para imprimir los graficos de los maximos,minimos y promedios de las distintas generaciones
+iteraciones=[]
+for u in range(nroIteraciones+1):
+	iteraciones.append(u)
+
+
+plt.plot(iteraciones,maximos)
+plt.plot(iteraciones,minimos)
+plt.plot(iteraciones,promedios)
+plt.show()
