@@ -1,0 +1,269 @@
+import random
+import math
+import statistics
+import operator
+import matplotlib.pyplot as plt
+
+#Función que genera cada cromosoma de la población inicial concatenando ceros y unos de forma aleatoria
+def aleatorio(n):
+	numero=""
+	for i in range(n):
+		a = str(random.randint(0,1))
+		numero += a
+	return (numero)
+
+#Función que agrega cada coromosoma creado aleatoriamente a una lista que va a ser la población inicial
+def arreglo(n, m):
+	numeros = []
+	for i in  range(n):
+		numeros.append(aleatorio(m))
+	return numeros
+
+
+#Esta función convierte cada cromosoma de la poblacion a un número entero y los agrega a una lista
+def pasaje(poblBinaria):
+	poblacionEnteros=[]
+	for i in range(10):
+		poblacionEnteros.append(int(poblBinaria[i], 2))
+	return poblacionEnteros
+
+
+#En esta función se crea una lista con los valores de todos los cormosomas de una población al ser aplicados a la función objetivo 
+def funcionobjetivo(poblEntero):
+	valoresfo = []
+	for i in range(10):
+		valoresfo.append((poblEntero[i]/((2**30)-1))**2)
+	return valoresfo
+
+
+#Función donde se genera una lista con los valores fitness de una población
+def fitness(funcObj):
+	valoresfit = []
+	sum = 0
+
+	for i in range(10):
+		sum += funcObj[i]
+
+	for i in range(10):
+		valoresfit.append(math.ceil (funcObj[i]*100/sum))
+
+	return valoresfit
+
+
+#Compara los valores de la funcion objetivo aplicada a ambos cormosomas, selecciona el de mayor valor y devuelve el cromosoma correspondiente a ese valor mas grande
+def seleccionTorneo(elegidos,cantIndividuos):
+	global poblacion
+	global funObj
+	valoresFuncObj=dict()
+	for i in range(cantIndividuos):
+		pos=poblacion.index(elegidos[i])
+		valoresFuncObj[pos]=funObj[pos]
+	max_key = max(valoresFuncObj.items(), key=operator.itemgetter(1))[0]
+	return poblacion[max_key]
+
+
+
+
+
+
+#Realiza la mutación, intercambiando los valores del gen por 0 o 1 dependiendo de su valor original
+def mutacion(posMutacion,padre):
+	padreLista=list(padre)
+	if(padreLista[posMutacion]=='1'):
+		padreLista[posMutacion]='0'
+	else:
+		padreLista[posMutacion]='1'
+
+	padreCadena="".join(map(str, padreLista))
+	
+	return padreCadena
+
+
+
+
+#Realiza el crossover, intercambiando los genes entre los padres dependiendo de la posición de corte, que es pasada por parámetro
+def crossover(nro,pad1,pad2):
+	hijo1=[]
+	hijo2=[]
+	hijo1.append(pad1[:nro])
+	hijo1.append(pad2[nro:])
+	hijo2.append(pad2[:nro])
+	hijo2.append(pad1[nro:])
+	hijo1="".join(map(str, hijo1))
+	hijo2="".join(map(str, hijo2))
+
+	return [hijo1,hijo2]
+
+
+#Función que toma los padres seleccionados, evalua si va a ocurrir crossover, hace lo mismo para la mutación y devuelve a los hijos para que estos sean agregados a la siguetnte población
+def padres(nroCross,pad1,pad2):
+	hijosCross=[]
+	if(nroCross<0.75):
+		nroCorte=random.randint(0,28)
+		hijosCross.extend(crossover(nroCorte,pad1,pad2))
+		pad1=hijosCross[0]
+		pad2=hijosCross[1]
+	padresLista=[pad1,pad2]
+	for i in range(2):
+		nroMut=random.random()
+		if(nroMut<0.05):
+			posMutacion=random.randint(0,29)
+			padresLista[i] = mutacion(posMutacion,padresLista[i])
+	
+	return padresLista
+
+
+
+#Pregunto si se quiere ejecutar la Opcion C o D
+op = input('Seleccione opción C o D: ')
+
+#Variable que indica el numero de generaciones que vamos a observar
+nroIteraciones=100
+#Creo la lista con la población inicial
+n = 10
+poblacion = arreglo(n, 30)
+print("Primera  poblacion: ")
+print (poblacion)
+
+
+#Creo la listas para la muestra de graficos
+maximos=[]
+minimos=[]
+promedios=[]
+
+
+
+if op.lower() == 'c':
+	for j in range(nroIteraciones):
+
+		#Creo las distintas listas para poder avanzar con el procedimiento
+		poblacionEnteros=pasaje(poblacion)
+		funObj=funcionobjetivo(poblacionEnteros)
+		fit = fitness(funObj)
+
+		#Creo una lista con los valores de la función objetivo ordenados y muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de cada población
+		funObjOrd=sorted(funObj,reverse=True)
+		posMax = funObj.index(funObjOrd[0])
+		print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
+		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
+		maximos.append(funObjOrd[0])
+		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
+		minimos.append(funObjOrd[9])
+		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
+		promedios.append(statistics.mean(funObjOrd))
+		#print("SUMA: "+str(sum(funObj)))
+		print()
+	
+		nuevaPoblacion=[]
+		elegidos=[]
+		padresElegidos=[]
+		
+
+		#Genero una lista con los 10 padres elegidos a traves del método de Torneo
+		for t in range(10):
+			cantIndividuos=2
+			for k in range(cantIndividuos):
+				elegidos.append(random.choice(poblacion))
+			padresElegidos.append(seleccionTorneo(elegidos,cantIndividuos))
+
+		#Tomo los padres de a pares y aplico crossover, mutuación o nada dependiendo los valores de los números de cross y mutuación generados aleatoriamente 
+		for i in range(5):
+			nroCross=random.random()
+			nuevaPoblacion.extend(padres(nroCross,padresElegidos[(2*i)],padresElegidos[1+(2*i)]))
+		
+		#Actualizo la población para trabajar con los cormosomas de la ultima población generada 
+		poblacion=nuevaPoblacion
+	
+
+	#Muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de la última población generada
+	posMax = funObj.index(funObjOrd[0])
+	print("Cromosoma correspondiente al valor máximo población número "+str(nroIteraciones)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
+	print("Valor máximo población número "+str(nroIteraciones)+"= "+str(funObjOrd[0]))
+	maximos.append(funObjOrd[0])
+	print("Valor mínimo población número "+str(nroIteraciones)+"= "+str(funObjOrd[9]))
+	minimos.append(funObjOrd[9])
+	print("Promedio población número "+str(nroIteraciones)+"= "+ str(statistics.mean(funObjOrd)))
+	promedios.append(statistics.mean(funObjOrd))
+	print()
+	print("Primera final: ")
+	print (poblacion)
+	
+	
+
+
+else:
+	for j in range(nroIteraciones):
+
+		#Creo las distintas listas para poder avanzar con el procedimiento
+		poblacionEnteros=pasaje(poblacion)
+		funObj=funcionobjetivo(poblacionEnteros)
+		fit = fitness(funObj)
+	
+		#Creo una lista con los valores de la función objetivo ordenados y muestro el valor máximo,mínimo y el promedio de cada población
+		funObjOrd=sorted(funObj,reverse=True)
+		posMax = funObj.index(funObjOrd[0])
+		print("Cromosoma correspondiente al valor máximo población número "+str(j)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
+		print("Valor máximo población número "+str(j)+"= "+str(funObjOrd[0]))
+		maximos.append(funObjOrd[0])
+		print("Valor mínimo población número "+str(j)+"= "+str(funObjOrd[9]))
+		minimos.append(funObjOrd[9])
+		print("Promedio población número "+str(j)+"= "+ str(statistics.mean(funObjOrd)))
+		promedios.append(statistics.mean(funObjOrd))
+
+		#print("SUMA: "+str(sum(funObj)))
+	
+		print()
+	
+		#Agrego directamente a al nueva población los dos cormosomas que poseen el mejor fitness(si poseen el mejor fitness, también poseen los valores mayores en la lista de los valores de la función objetivo)
+		nuevaPoblacion=[]
+		x1 = funObj.index(funObjOrd[0])
+		x2 = funObj.index(funObjOrd[1])
+		nuevaPoblacion.append(poblacion[x1])
+		nuevaPoblacion.append(poblacion[x2])
+
+		elegidos=[]
+		padresElegidos=[]
+
+		#Genero una lista con los 8 padres elegidos a traves del método de Torneo
+		for t in range(8):
+			cantIndividuos=2
+			for k in range(cantIndividuos):
+				elegidos.append(random.choice(poblacion))
+			padresElegidos.append(seleccionTorneo(elegidos,cantIndividuos))
+
+		#Tomo los padres de a pares y aplico crossover, mutuación o nada dependiendo los valores de los números de cross y mutuación generados aleatoriamente 
+		for i in range(4):
+			nroCross=random.random()
+			nuevaPoblacion.extend(padres(nroCross,padresElegidos[(2*i)],padresElegidos[1+(2*i)]))
+	
+
+
+		#Actualizo la población para trabajar con los cormosomas de la ultima población generada
+		poblacion=nuevaPoblacion
+	
+	#Muestro el Cromosoma correspondiente al valor máximo, el valor máximo,mínimo y el promedio de la última población generada
+	posMax = funObj.index(funObjOrd[0])
+	print("Cromosoma correspondiente al valor máximo población número "+str(nroIteraciones)+"= "+str(poblacion[posMax])+" // Numero entero: "+str(int(poblacion[posMax], 2)))
+	print("Valor máximo población número "+str(nroIteraciones)+"= "+str(funObjOrd[0]))
+	maximos.append(funObjOrd[0])
+	print("Valor mínimo población número "+str(nroIteraciones)+"= "+str(funObjOrd[9]))
+	minimos.append(funObjOrd[9])
+	print("Promedio población número "+str(nroIteraciones)+"= "+ str(statistics.mean(funObjOrd)))
+	promedios.append(statistics.mean(funObjOrd))
+	print()
+	print("Población  final: ")
+	print (poblacion)
+	
+
+	
+#Operaciones que realizo para imprimir los graficos de los maximos,minimos y promedios de las distintas generaciones
+iteraciones=[]
+for u in range(nroIteraciones+1):
+	iteraciones.append(u)
+
+plt.plot(iteraciones,maximos)
+plt.plot(iteraciones,minimos)
+plt.plot(iteraciones,promedios)
+plt.show()
+	
+	
