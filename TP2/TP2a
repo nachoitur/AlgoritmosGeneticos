@@ -6,19 +6,25 @@ def creaCombinaciones():
 	combinaciones=[]
 	for x in range(2**10):
 		combinaciones.append(format(x+1, "b"))
+
 	#Completa los 0s en los números binarios < 1000000000
 	for x in range(2**10):
 		tam= len(str(combinaciones[x]))
 		for i in range(10-tam):
 			combinaciones[x] = '0'+combinaciones[x]
+
 	#Transforma las combinaciones en una lista de listas
 	combinacionesLista=[]
 	for x in range(2**10):
 		combinacionesLista.append(list(combinaciones[x]))
 		#print(combinacionesLista)
-#print(combinacionesLista[1][10])
+    	#print(combinacionesLista[1][10])
+    	
+
+   
 	print(combinaciones)
-	print(combinacionesLista)
+	print("Arreglo de todas las combinaciones posibles(Un 1 representa que el objeto coincidente a la posicion del arreglo es selecciado en la mochila)")
+	print()
 	return(combinacionesLista)
 
 def inicializaTotal():
@@ -46,8 +52,6 @@ def buscaMaximo(total):
 				valMax=total[x][1]
 				posValMax=x
 
-	print(posValMax)
-	print(valMax)
 	return(posValMax)
 
 
@@ -57,15 +61,16 @@ total=inicializaTotal()
 sumaTotales(total,combinacionesLista)
 posValMax=buscaMaximo(total)
 
+print("Todas las combinaciones posibles de objetos en las mochilas, mostrando el peso y valor total: ")
 print(total)
+print()
 
-#print(posValMax)
-#print(valMax)
-print(combinacionesLista[posValMax])
+
+#print(combinacionesLista[posValMax])
 
 
 listaFinal = combinacionesLista[posValMax]
-
+print()
 print("Los elementos de la mochila seleccionados fueron: ")
 for x in range(len(listaFinal)):
 	if(listaFinal[x]=='1'):
