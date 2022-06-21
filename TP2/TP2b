@@ -6,7 +6,7 @@ def creaProporciones():
 	for x in range (10):
 		valores.append(mochila[x][1]/mochila[x][0])
 		
-	print (valores)
+	#print (valores)
 	return(valores)
 
 #Carga la mochila hasta el volumen máximo
@@ -19,8 +19,7 @@ def buscaTotal(valoresOrdenados,valores):
 		if(pesoTotal+peso <= 4200):
 			total.append(pos)
 			pesoTotal=peso+pesoTotal
-			#print(peso)
-			#print(pesoTotal)
+
 	return(total)
 			
 
@@ -29,9 +28,13 @@ def buscaTotal(valoresOrdenados,valores):
 valores=creaProporciones()
 #Ordena los valores de mayor a menor
 valoresOrdenados=sorted(valores,reverse=True)
+print("Proporciones ordenadas de mayor a menor:")
 print(valoresOrdenados)
+print()
 total=buscaTotal(valoresOrdenados,valores)
+print("Objetos seleccionas: ")
 print(total)
+print()
 print("Los elementos de la mochila seleccionados fueron: ")
 for x in range(len(total)):
 	print("Objeto N°: " + str(total[x]  +1) + " " + str(mochila[ total[x] ]))
