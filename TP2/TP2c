@@ -14,8 +14,9 @@ def creaCombinaciones():
 	combinacionesLista=[]
 	for x in range(2**3):
 		combinacionesLista.append(list(combinaciones[x]))
-		#print(combinacionesLista)
-#print(combinacionesLista[1][10])
+	print("Arreglo de todas las combinaciones posibles(Un 1 representa que el objeto coincidente a la posicion del arreglo es selecciado en la mochila)")
+	print(combinaciones)
+	print()
 	return(combinacionesLista)
 
 def inicializaTotal():
@@ -43,26 +44,64 @@ def buscaMaximo(total):
 				valMax=total[x][1]
 				posValMax=x
 
-	print(posValMax)
-	print(valMax)
 	return(posValMax)
 
 
+def creaProporciones():
+	valores=[]
+	for x in range (3):
+		valores.append(mochila[x][1]/mochila[x][0])
+		
+	return(valores)
 
+#Carga la mochila hasta el volumen máximo
+def buscaTotal(valoresOrdenados,valores):
+	total=[]
+	pesoTotal=0
+	for x in range(3):
+		pos= valores.index(valoresOrdenados[x])
+		peso=mochila[pos][0]
+		if(pesoTotal+peso <= 3000):
+			total.append(pos)
+			pesoTotal=peso+pesoTotal
+	return(total)
+
+
+
+
+
+
+
+print("METODO HEURÍSTICO")
 combinacionesLista=creaCombinaciones()
 total=inicializaTotal()
 sumaTotales(total,combinacionesLista)
 posValMax=buscaMaximo(total)
-
+print("Todas las combinaciones posibles de objetos en las mochilas, mostrando el peso y valor total: ")
 print(total)
-
-#print(posValMax)
-#print(valMax)
-print(combinacionesLista[posValMax])
-
+print()
 listaFinal = combinacionesLista[posValMax]
-
-print("Los elementos de la mochila seleccionados fueron: ")
+print("Los elementos de la mochila seleccionados con el metodo HEURÍSTICO fueron: ")
 for x in range(len(listaFinal)):
 	if(listaFinal[x]=='1'):
 		print("Objeto N°: " + str(x+1) + " " + str(mochila[x]))
+
+
+
+print()
+print("METODO GREEDY")
+
+
+valores=creaProporciones()
+#Ordena los valores de mayor a menor
+valoresOrdenados=sorted(valores,reverse=True)
+print("Proporciones ordenadas de mayor a menor:")
+print(valoresOrdenados)
+print()
+total=buscaTotal(valoresOrdenados,valores)
+print("Objetos seleccionas: ")
+print(total)
+print()
+print("Los elementos de la mochila seleccionados con el metodo GREEDY fueron: ")
+for x in range(len(total)):
+	print("Objeto N°: " + str(total[x]  +1) + " " + str(mochila[ total[x] ]))
