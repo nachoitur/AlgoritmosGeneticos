@@ -1,40 +1,156 @@
 import openpyxl
+import random
 basedatos=openpyxl.load_workbook(r'C:\Users\Administrador\Downloads\TablaCapitales.xlsx')
-
 sheet=basedatos.get_sheet_by_name('Sheet1')
 
-
-recorrido=[] 
-print("Ingrese ciudad de partida: ")
-ciudad="Corrientes"
-#ciudad=input()
-recorrido.append(ciudad)
-
-indice=0
-for x in range(25):
-	if(sheet.cell(row=x+2,column=1).value == ciudad):
-		indice=x+2
-		break
+def encuentaraRecorrido(recorrido,indice):
+	kms=0
+	for t in range(23):
+		min=1000000
+		for x in range(24):
+			if( (int(sheet.cell(row=indice,column=x+2).value)!=0 ) and (int(sheet.cell(row=indice,column=x+2).value)<min) and ((sheet.cell(row=1,column=x+2).value) not in recorrido)):
+				min=int(sheet.cell(row=indice,column=x+2).value)
+				ciudadAseguir=sheet.cell(row=1,column=x+2).value
 	
-kms=0
-for t in range(23):
-	min=1000000
+		recorrido.append(ciudadAseguir)
+		kms=kms+min
+
+	return (kms)	
+
+
+
+def buscaIndice(ciudad):
+	i=0
+	for x in range(25):
+		if(sheet.cell(row=x+2,column=1).value == ciudad):
+			i=x+2
+			break
+	return (i)
+	#Encuentra el inidice de la ciudad en el docuemento Excel
+
+
+#Función que agrega cada coromosoma creado aleatoriamente a una lista que va a ser la población inicial
+def arreglo(n, m):
+	p=[]
+	for x in range(n):
+		coromosoma = []
+		while(len(coromosoma)!=24):
+			nroAlt=random.randint(1, 24)
+			if(nroAlt not in coromosoma):
+				coromosoma.append(nroAlt)
+		p.append(coromosoma)	
+	return p
+
+
+
+
+
+
+
+
+
+def opcionUno():
+	recorrido=[] 
+	print("Ingrese ciudad de partida: ")
+	ciudad=input()
+	recorrido.append(ciudad)
+	indice=buscaIndice(ciudad)
+	kilometros=encuentaraRecorrido(recorrido,indice)
+	indiceUltCiud=buscaIndice(recorrido[-1])
+	print(sheet.cell(row=indice,column=indiceUltCiud).value)
+	kilometros=kilometros+ int(sheet.cell(row=indice,column=indiceUltCiud).value)
+	#Agrega primera ciudad de todas
+	recorrido.append(ciudad)
+	print(recorrido)
+	print("kilometros finales:" + str(kilometros))
+
+
+def opcionDos():
+	kmMin=100000000
+	recorridoMin=[]
 	for x in range(24):
-		if( (int(sheet.cell(row=indice,column=x+2).value)!=0 ) and (int(sheet.cell(row=indice,column=x+2).value)<min) and ((sheet.cell(row=1,column=x+2).value) not in recorrido)):
-			min=int(sheet.cell(row=indice,column=x+2).value)
-			ciudadAseguir=sheet.cell(row=1,column=x+2).value
+		recorrido=[] 
+		recorrido.append(sheet.cell(row=x+2,column=1).value)
+		indice=x+2
+		kilometros=encuentaraRecorrido(recorrido,indice)
+		indiceUltCiud=buscaIndice(recorrido[-1])
+		kilometros=kilometros+ int(sheet.cell(row=indice,column=indiceUltCiud).value)
+		#Agrega primera ciudad de todas
+		recorrido.append(sheet.cell(row=x+2,column=1).value)
+		#print(recorrido)
+		print("kilometros finales:" + str(kilometros))
+		if(kilometros<kmMin):
+			kmMin=kilometros
+			recorridoMin=recorrido
 
-	recorrido.append(ciudadAseguir)
-	kms=kms+min		
+	print("Recorrido mínimo: ")
+	print(recorridoMin)
+	print("kilometros finales:" + str(kmMin))
 
-	print("minimo")
-	print(min)
-	print(ciudadAseguir)	
+def opcionTres():
+	nroIteraciones=10
+	#Creo la lista con la población inicial
+	n = 8
+	poblacion = arreglo(n, 23)
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
-recorrido.append(ciudad)
 
-print(recorrido)
-print("kms:" + str(kms*2)) 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def menu():
+	print("Seleccione la Opcion 1-Elegir ciudad  2-Todas las ciudades 3-A traves de algoritmo genetico 0-Salir del programa")
+	op=int(input())
+	return(op)
+
+
+
+opcion=menu()
+while(opcion!=0):
+	if(opcion==1):
+		opcionUno()
+	elif(opcion==2):
+		opcionDos()
+	else:
+		opcionTres()
+
+	opcion=menu()
+
+	
+	
 
 
