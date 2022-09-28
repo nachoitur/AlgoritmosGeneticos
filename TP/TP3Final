@@ -17,15 +17,15 @@ def buscaIndice(ciudad):
 def encuentaraRecorrido(recorrido,indice):
 	kms=0
 	for t in range(23):
-		min=1000000
+		mini=1000000
 		for x in range(24):
-			if( (int(sheet.cell(row=indice,column=x+2).value)!=0 ) and (int(sheet.cell(row=indice,column=x+2).value)<min) and ((sheet.cell(row=1,column=x+2).value) not in recorrido)):
-				min=int(sheet.cell(row=indice,column=x+2).value)
+			if( (int(sheet.cell(row=indice,column=x+2).value)!=0 ) and (int(sheet.cell(row=indice,column=x+2).value)<mini) and ((sheet.cell(row=1,column=x+2).value) not in recorrido)):
+				mini=int(sheet.cell(row=indice,column=x+2).value)
 				ciudadAseguir=sheet.cell(row=1,column=x+2).value
 	
 		recorrido.append(ciudadAseguir)
-		indice = buscaindice(ciudadAseguir)
-		kms=kms+min
+		indice = buscaIndice(ciudadAseguir)
+		kms=kms+mini
 
 	return (kms)	
 
@@ -75,10 +75,22 @@ def seleccionTorneo(elegidos):
 	min_key = min(valoresFuncObj.items(), key=operator.itemgetter(1))[0]
 	return poblacion[min_key]
 
+#Función que pasa de un diccionario a una lista
+def pasaje(hijo):
+	lista=[]
+	for i in range(24):
+		lista.append(hijo.get(i))
+	return lista
+
+def mutacion(pM,hijo):
+	aux = hijo[pM]
+	hijo[pM] = hijo[pM+1]
+	hijo[pM+1] = aux
+	return hijo
+
 def padres(padre1, padre2):
 	hijosCross=[]
-	#nroCross=random.random()
-	nroCross=0.5
+	nroCross=random.random()
 	if(nroCross<0.75):
 		hijo1=dict()
 		hijo2=dict()
@@ -86,7 +98,7 @@ def padres(padre1, padre2):
 		band = True
 		x = 0
 		while(band):
-			for y in range(23):
+			for y in range(24):
 				if(padre2[x] == padre1[y]):
 					if(hijo1[0] == padre1[y]):
 						band = False
@@ -94,24 +106,29 @@ def padres(padre1, padre2):
 					hijo1[y] = padre2[x]
 					x = y
 					break
-		for i in range(23):
+		for i in range(24):
 			if(i not in hijo1):
 				hijo1[i] = padre2[i]
 				hijo2[i] = padre1[i]
-		for i in range(23):
+		for i in range(24):
 			if(i not in hijo2):
 				hijo2[i] = padre2[i]
-		print(hijo1)
-		print(hijo2)
+		hijosCross.append(pasaje(hijo1))
+		hijosCross.append(pasaje(hijo2))
+	else:
+		hijosCross.append(padre1)
+		hijosCross.append(padre2)
+	for i in range(2):
+		nroMut=random.random()
+		if(nroMut<0.05):
+			posMutacion=random.randint(0,22)
+			hijosCross[i] = mutacion(posMutacion,hijosCross[i])
 	return(hijosCross)
 
-#padre1=[12,03,06,19,08,23,05,...]
-#padre2=[19,15,02,23,01,05,12,...]
 
-#hijo1 =[12,  ,  ,19,  ,23,05,  ,...]
 
-#hijo1 =[12,15,02,19,01,23,05,...]
-#hijo2 =[  ,03,06,  ,08,  ,  ,...]
+
+
 
 
 
@@ -148,7 +165,6 @@ def opcionDos():
 		#Agrega primera ciudad de todas
 		recorrido.append(sheet.cell(row=x+2,column=1).value)
 		#print(recorrido)
-		print("kilometros finales:" + str(kilometros))
 		if(kilometros<kmMin):
 			kmMin=kilometros
 			recorridoMin=recorrido
@@ -158,66 +174,47 @@ def opcionDos():
 	print("kilometros finales:" + str(kmMin))
 
 def opcionTres():
-	nroIteraciones=10
+	nroIteraciones=100
 	#Creo la lista con la población inicial
-	n = 4
+	n = 100
 	global poblacion 
 	poblacion = arreglo(n, 24)
+	print("Poblacion inicial:")
+	print(poblacion)
 	global funObj
-	funObj = funcionObjetivo(poblacion, n)
-	funFit = fitness(funObj, n)
 	
 
-	elegidos=[]
-	padresElegidos=[]
-	nuevaPoblacion=[]
-
-	#Genero una lista con los 10 padres elegidos a traves del método de Torneo
-	for t in range(n):
-		for k in range(2):
-			elegidos.append(random.choice(poblacion))
-		padresElegidos.append(seleccionTorneo(elegidos))
+	for i in range(nroIteraciones):
+		funObj = funcionObjetivo(poblacion, n)
+		funFit = fitness(funObj, n)
+	
 		elegidos=[]
+		padresElegidos=[]
+		nuevaPoblacion=[]
+	
+		#Genero una lista con los padres elegidos a traves del método de Torneo
+		for t in range(n):
+			for k in range(2):
+				elegidos.append(random.choice(poblacion))
+			padresElegidos.append(seleccionTorneo(elegidos))
+			elegidos=[]
+	
+		rango = int(n/2)
+	
+		for i in range(rango):
+			nuevaPoblacion.extend(padres(padresElegidos[(2*i)],padresElegidos[1+(2*i)]))
+	
+		poblacion = nuevaPoblacion
+	
 
-	print(padresElegidos)
-
-	for i in range(2):
-		print("---------------------------")
-		print(padresElegidos[(2*i)])
-		print(padresElegidos[1+(2*i)])
-		print("---------------------------")
-		nuevaPoblacion.extend(padres(padresElegidos[(2*i)],padresElegidos[1+(2*i)]))
-		print(nuevaPoblacion)
-
+	print("///////////////////////////////////////////////////////////////////////////////////////")
+	print("///////////////////////////////////////////////////////////////////////////////////////")
+	print("///////////////////////////////////////////////////////////////////////////////////////")
+	print("Poblacion final:")
+	print(poblacion)
+	print(funObj)
 	
 	
-	
-	
-	
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
