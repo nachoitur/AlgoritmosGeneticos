@@ -136,20 +136,20 @@ def padres(padre1, padre2):
 
 
 
+
+
 def opcionUno():
-	recorrido=[] 
-	print("Ingrese ciudad de partida: ")
-	ciudad=input()
+	recorrido=[]
+	ciudad=input("Ingrese ciudad de partida: ")
 	recorrido.append(ciudad)
 	indice=buscaIndice(ciudad)
 	kilometros=encuentaraRecorrido(recorrido,indice)
 	indiceUltCiud=buscaIndice(recorrido[-1])
-	print(sheet.cell(row=indice,column=indiceUltCiud).value)
 	kilometros=kilometros+ int(sheet.cell(row=indice,column=indiceUltCiud).value)
 	#Agrega primera ciudad de todas
 	recorrido.append(ciudad)
-	print(recorrido)
-	print("kilometros finales:" + str(kilometros))
+	print("Recorrido mínimo partiendo desde "+ciudad+": ",recorrido)
+	print("Kilometros finales:" + str(kilometros))
 
 
 def opcionDos():
@@ -169,14 +169,13 @@ def opcionDos():
 			kmMin=kilometros
 			recorridoMin=recorrido
 
-	print("Recorrido mínimo: ")
-	print(recorridoMin)
-	print("kilometros finales:" + str(kmMin))
+	print("Recorrido mínimo: ", recorridoMin)
+	print("Kilometros finales:" + str(kmMin))
 
 def opcionTres():
 	nroIteraciones=100
 	#Creo la lista con la población inicial
-	n = 100
+	n = 50
 	global poblacion 
 	poblacion = arreglo(n, 24)
 	print("Poblacion inicial:")
@@ -212,6 +211,7 @@ def opcionTres():
 	print("///////////////////////////////////////////////////////////////////////////////////////")
 	print("Poblacion final:")
 	print(poblacion)
+	print("KM finales correspondientes a cada poblacion:")
 	print(funObj)
 	
 	
@@ -224,8 +224,16 @@ def opcionTres():
 
 
 def menu():
-	print("Seleccione la Opcion 1-Elegir ciudad  2-Todas las ciudades 3-A traves de algoritmo genetico 0-Salir del programa")
-	op=int(input())
+	print("")
+	print("")
+	print("MENU PRINCIPAL:")
+	print("")
+	print("1-Elegir ciudad")
+	print("2-Todas las ciudades")
+	print("3-A traves de algoritmo genetico")
+	print("0-Finalizar el programa")
+	print("")
+	op=int(input("Seleccione la opción deseada: "))
 	return(op)
 
 
