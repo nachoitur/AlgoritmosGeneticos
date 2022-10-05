@@ -2,7 +2,7 @@ import openpyxl
 import random
 import math
 import operator
-basedatos=openpyxl.load_workbook(r'D:\Users\NACHO\Downloads\TablaCapitales.xlsx')
+basedatos=openpyxl.load_workbook(r'C:\Users\aleco\OneDrive\Escritorio\Alg Genet\TablaCapitales.xlsx')
 sheet=basedatos.get_sheet_by_name('Sheet1')
 
 #Encuentra el indice de la ciudad en el docuemento Excel
@@ -27,7 +27,13 @@ def encuentaraRecorrido(recorrido,indice):
 		indice = buscaIndice(ciudadAseguir)
 		kms=kms+mini
 
-	return (kms)	
+	return (kms)
+
+def cambiaAnombres(recorrido):
+	nombres=[]
+	for x in range(24):
+		nombres.append(sheet.cell(row=1,column=recorrido[x]+1).value)
+	return nombres
 
 
 
@@ -50,7 +56,14 @@ def funcionObjetivo(p, n):
 		kmTotal = 0
 		for y in range(23):
 			kmTotal += int(sheet.cell(row=(p[x][y])+1,column=(p[x][y+1])+1).value)
+
+		#Agrega la distancia de la ultima ciudad hasta la primera		
+		kmTotal=kmTotal+ int(sheet.cell(row=(p[x][0]+1),column=(p[x][23]+1)).value)
 		valores.append(kmTotal)
+
+		
+
+
 	return (valores)
 
 
@@ -120,7 +133,7 @@ def padres(padre1, padre2):
 		hijosCross.append(padre2)
 	for i in range(2):
 		nroMut=random.random()
-		if(nroMut<0.05):
+		if(nroMut<0.3):
 			posMutacion=random.randint(0,22)
 			hijosCross[i] = mutacion(posMutacion,hijosCross[i])
 	return(hijosCross)
@@ -173,13 +186,11 @@ def opcionDos():
 	print("Kilometros finales:" + str(kmMin))
 
 def opcionTres():
-	nroIteraciones=100
+	nroIteraciones=200
 	#Creo la lista con la población inicial
 	n = 50
 	global poblacion 
 	poblacion = arreglo(n, 24)
-	print("Poblacion inicial:")
-	print(poblacion)
 	global funObj
 	
 
@@ -206,13 +217,63 @@ def opcionTres():
 		poblacion = nuevaPoblacion
 	
 
-	print("///////////////////////////////////////////////////////////////////////////////////////")
-	print("///////////////////////////////////////////////////////////////////////////////////////")
-	print("///////////////////////////////////////////////////////////////////////////////////////")
-	print("Poblacion final:")
-	print(poblacion)
-	print("KM finales correspondientes a cada poblacion:")
-	print(funObj)
+	print()
+	menor=min(funObj)
+	menorPos=funObj.index(menor)
+	print("Mejor recorrido: ")
+	recorrido=cambiaAnombres(poblacion[menorPos])
+	recorrido.append(sheet.cell(row=poblacion[menorPos][0]+1,column=1).value)
+	print(recorrido)
+	print("Kilometros finales: ")
+	print(menor)
+	
+def opcionCuatro():
+	nroIteraciones=200
+	#Creo la lista con la población inicial
+	n = 50
+	global poblacion 
+	poblacion = arreglo(n, 24)
+	global funObj
+	
+
+	for i in range(nroIteraciones):
+		funObj = funcionObjetivo(poblacion, n)
+		funFit = fitness(funObj, n)
+		funObjOrdenada=sorted(funObj)
+		
+		#Agrego directamente a al nueva población los dos cormosomas que poseen el mejor fitness(si poseen el mejor fitness, también poseen los valores mayores en la lista de los valores de la función objetivo)
+		nuevaPoblacion=[]
+		for x in range(10):
+			nuevaPoblacion.append(poblacion[funObj.index(funObjOrdenada[x])])
+	
+		elegidos=[]
+		padresElegidos=[]
+
+	
+		#Genero una lista con los padres elegidos a traves del método de Torneo
+		for t in range(n-10):
+			for k in range(2):
+				elegidos.append(random.choice(poblacion))
+			padresElegidos.append(seleccionTorneo(elegidos))
+			elegidos=[]
+	
+		rango = int((n/2)-5)
+	
+		for i in range(rango):
+			nuevaPoblacion.extend(padres(padresElegidos[(2*i)],padresElegidos[1+(2*i)]))
+	
+		poblacion = nuevaPoblacion
+	
+
+	print()
+	menor=min(funObj)
+	menorPos=funObj.index(menor)
+	print("Mejor recorrido: ")
+	recorrido=cambiaAnombres(poblacion[menorPos])
+	recorrido.append(sheet.cell(row=poblacion[menorPos][0]+1,column=1).value)
+	print(recorrido)
+	print("Kilometros finales: ")
+	print(menor)
 	
 	
 
@@ -231,6 +292,7 @@ def menu():
 	print("1-Elegir ciudad")
 	print("2-Todas las ciudades")
 	print("3-A traves de algoritmo genetico")
+	print("4-A traves de algoritmo genetico con Elitismo")
 	print("0-Finalizar el programa")
 	print("")
 	op=int(input("Seleccione la opción deseada: "))
@@ -246,5 +308,7 @@ while(opcion!=0):
 		opcionDos()
 	elif(opcion==3):
 		opcionTres()
+	elif(opcion==4):
+		opcionCuatro()
 
 	opcion=menu()
